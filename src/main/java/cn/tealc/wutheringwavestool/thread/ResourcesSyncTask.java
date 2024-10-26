@@ -25,6 +25,7 @@ import java.net.http.HttpResponse;
 import java.nio.file.Files;
 import java.nio.file.StandardCopyOption;
 import java.time.Duration;
+import java.util.Locale;
 import java.util.Map;
 
 /**
@@ -49,13 +50,26 @@ public class ResourcesSyncTask extends Task<String> {
     private  int filesSize = 0;
 
     public ResourcesSyncTask() {
+        Locale locale = Config.setting.getLanguage();
+        String language = null;
+
+        if (locale.getLanguage().equals("zh")){
+            if (locale.getCountry().equals("CN")){
+                language = locale.toString();
+            }else{
+                language = Locale.SIMPLIFIED_CHINESE.toString();
+            }
+        }else {
+            language = Locale.ENGLISH.toString();
+        }
+
         switch (Config.setting.getResourceSource()){
             case 1 -> {
-                url =  String.format(ROOT_RESOURCE_URL_2,Config.setting.getLanguage());
+                url =  String.format(ROOT_RESOURCE_URL_2,language);
                 resource_template = RESOURCE_TEMPLATE_2;
             }
             default ->  {
-                url =  String.format(ROOT_RESOURCE_URL_1,Config.setting.getLanguage());
+                url =  String.format(ROOT_RESOURCE_URL_1,language);
                 resource_template = RESOURCE_TEMPLATE_1;
             }
         }

@@ -172,7 +172,7 @@ public class SettingView implements Initializable, FxmlView<SettingViewModel> {
 
         languageBox.setItems(viewModel.getLanguages());
         for (Pair<String, Locale> language : languageBox.getItems()) {
-            if (language.getValue().toString().equals(Config.setting.getLanguage().toString())){
+            if (language.getValue().getLanguage().equals(Config.setting.getLanguage().getLanguage())){
                 languageBox.getSelectionModel().select(language);
             }
         }
@@ -184,7 +184,7 @@ public class SettingView implements Initializable, FxmlView<SettingViewModel> {
         languageBox.setConverter(new StringConverter<>() {
             @Override
             public String toString(Pair<String, Locale> stringLocalePair) {
-                return stringLocalePair.getKey();
+                return stringLocalePair != null ? stringLocalePair.getKey() : null;
             }
             @Override
             public Pair<String, Locale> fromString(String s) {
