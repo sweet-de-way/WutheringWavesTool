@@ -1,14 +1,12 @@
 package cn.tealc.wutheringwavestool.ui.kujiequ;
 
-import cn.tealc.wutheringwavestool.dao.GameRoleDataDao;
 import cn.tealc.wutheringwavestool.dao.GameTowerDataDao;
 import cn.tealc.wutheringwavestool.dao.UserInfoDao;
 import cn.tealc.wutheringwavestool.model.ResponseBody;
-import cn.tealc.wutheringwavestool.model.kujiequ.roleData.Role;
 import cn.tealc.wutheringwavestool.model.kujiequ.sign.UserInfo;
 import cn.tealc.wutheringwavestool.model.kujiequ.towerData.*;
 import cn.tealc.wutheringwavestool.model.tower.TowerData;
-import cn.tealc.wutheringwavestool.thread.api.TowerDataDetailTask;
+import cn.tealc.wutheringwavestool.thread.kujiequ.TowerDataDetailTask;
 import de.saxsys.mvvmfx.ViewModel;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.collections.FXCollections;

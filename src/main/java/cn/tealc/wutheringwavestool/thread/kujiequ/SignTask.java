@@ -1,4 +1,4 @@
-package cn.tealc.wutheringwavestool.thread.api;
+package cn.tealc.wutheringwavestool.thread.kujiequ;
 
 import cn.tealc.wutheringwavestool.dao.SignHistoryDao;
 import cn.tealc.wutheringwavestool.dao.UserInfoDao;

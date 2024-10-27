@@ -1,10 +1,8 @@
-package cn.tealc.wutheringwavestool.thread.api;
+package cn.tealc.wutheringwavestool.thread.kujiequ;
 
 import cn.tealc.wutheringwavestool.dao.GameTowerDataDao;
 import cn.tealc.wutheringwavestool.model.ResponseBody;
 import cn.tealc.wutheringwavestool.model.ResponseBodyForApi;
-import cn.tealc.wutheringwavestool.model.kujiequ.roleData.RoleDetail;
-import cn.tealc.wutheringwavestool.model.kujiequ.roleData.user.RoleDailyData;
 import cn.tealc.wutheringwavestool.model.kujiequ.sign.SignUserInfo;
 import cn.tealc.wutheringwavestool.model.kujiequ.towerData.Difficulty;
 import cn.tealc.wutheringwavestool.model.kujiequ.towerData.DifficultyTotal;
@@ -15,7 +13,6 @@ import cn.tealc.wutheringwavestool.util.ApiDecryptException;
 import cn.tealc.wutheringwavestool.util.ApiUtil;
 import cn.tealc.wutheringwavestool.util.HttpRequestUtil;
 import com.fasterxml.jackson.core.type.TypeReference;
-import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import javafx.concurrent.Task;
 import org.slf4j.Logger;

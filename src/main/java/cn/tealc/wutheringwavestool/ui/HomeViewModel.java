@@ -15,7 +15,7 @@ import cn.tealc.wutheringwavestool.model.kujiequ.roleData.user.RoleInfo;
 import cn.tealc.wutheringwavestool.model.kujiequ.sign.SignUserInfo;
 import cn.tealc.wutheringwavestool.model.message.MessageInfo;
 import cn.tealc.wutheringwavestool.model.message.MessageType;
-import cn.tealc.wutheringwavestool.thread.api.*;
+import cn.tealc.wutheringwavestool.thread.kujiequ.*;
 import cn.tealc.wutheringwavestool.util.LanguageManager;
 import de.saxsys.mvvmfx.MvvmFX;
 import de.saxsys.mvvmfx.ViewModel;

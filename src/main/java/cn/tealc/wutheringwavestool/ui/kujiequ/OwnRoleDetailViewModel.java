@@ -6,7 +6,7 @@ import cn.tealc.wutheringwavestool.model.kujiequ.roleData.*;
 import cn.tealc.wutheringwavestool.model.kujiequ.roleData.weight.PhantomWeight;
 import cn.tealc.wutheringwavestool.model.kujiequ.sign.SignUserInfo;
 import cn.tealc.wutheringwavestool.thread.ImgColorBgTask;
-import cn.tealc.wutheringwavestool.thread.api.role.GameRoleDetailTask;
+import cn.tealc.wutheringwavestool.thread.kujiequ.role.GameRoleDetailTask;
 import cn.tealc.wutheringwavestool.util.LocalDataManager;
 import cn.tealc.wutheringwavestool.util.LocalResourcesManager;
 import de.saxsys.mvvmfx.ViewModel;

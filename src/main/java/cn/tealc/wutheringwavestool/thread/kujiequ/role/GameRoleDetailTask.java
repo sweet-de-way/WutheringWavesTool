@@ -1,10 +1,10 @@
-package cn.tealc.wutheringwavestool.thread.api.role;
+package cn.tealc.wutheringwavestool.thread.kujiequ.role;
 
 import cn.tealc.wutheringwavestool.model.ResponseBody;
 import cn.tealc.wutheringwavestool.model.ResponseBodyForApi;
 import cn.tealc.wutheringwavestool.model.kujiequ.roleData.RoleDetail;
 import cn.tealc.wutheringwavestool.model.kujiequ.sign.SignUserInfo;
-import cn.tealc.wutheringwavestool.thread.api.ApiConfig;
+import cn.tealc.wutheringwavestool.thread.kujiequ.ApiConfig;
 import cn.tealc.wutheringwavestool.util.ApiDecryptException;
 import cn.tealc.wutheringwavestool.util.ApiUtil;
 import cn.tealc.wutheringwavestool.util.HttpRequestUtil;

@@ -1,10 +1,9 @@
-package cn.tealc.wutheringwavestool.thread.api.role;
+package cn.tealc.wutheringwavestool.thread.kujiequ.role;
 
-import cn.tealc.wutheringwavestool.dao.GameRoleDataDao;
 import cn.tealc.wutheringwavestool.model.ResponseBody;
 import cn.tealc.wutheringwavestool.model.kujiequ.roleData.Role;
 import cn.tealc.wutheringwavestool.model.kujiequ.sign.SignUserInfo;
-import cn.tealc.wutheringwavestool.thread.api.ApiConfig;
+import cn.tealc.wutheringwavestool.thread.kujiequ.ApiConfig;
 import cn.tealc.wutheringwavestool.util.ApiDecryptException;
 import cn.tealc.wutheringwavestool.util.ApiUtil;
 import cn.tealc.wutheringwavestool.util.HttpRequestUtil;
@@ -23,16 +22,15 @@ import java.util.List;
 
 /**
  * @program: WutheringWavesTool
- * @description:获取角色信息并保存至数据库
+ * @description:
  * @author: Leck
  * @create: 2024-07-06 14:24
  */
-@Deprecated
-public class GameRoleDataSaveTask extends Task<ResponseBody<List<Role>>> {
-    private static final Logger LOG= LoggerFactory.getLogger(GameRoleDataSaveTask.class);
+public class GameRoleDataTask extends Task<ResponseBody<List<Role>>> {
+    private static final Logger LOG= LoggerFactory.getLogger(GameRoleDataTask.class);
     private SignUserInfo signUserInfo;
 
-    public GameRoleDataSaveTask(SignUserInfo signUserInfo) {
+    public GameRoleDataTask(SignUserInfo signUserInfo) {
         this.signUserInfo = signUserInfo;
     }
 
@@ -62,14 +60,8 @@ public class GameRoleDataSaveTask extends Task<ResponseBody<List<Role>>> {
                     List<Role> roleList = mapper.readValue(jsonNode.toString(), new TypeReference<List<Role>>() {
                     });
                     responseBody.setSuccess(tree.get("success").asBoolean());
+                    roleList.sort((o1, o2) -> Integer.compare(o2.getLevel(),o1.getLevel()));
                     responseBody.setData(roleList);
-
-
-                    GameRoleDataDao dataDao = new GameRoleDataDao();
-                    for (Role role : roleList) {
-                        dataDao.add(role);
-                    }
-                    
                 }else {
                     LOG.error("服务器返回异常，错误代码：{}",code);
                     JsonNode node = tree.get("msg");

@@ -1,4 +1,4 @@
-package cn.tealc.wutheringwavestool.thread.api;
+package cn.tealc.wutheringwavestool.thread.kujiequ;
 
 import cn.tealc.wutheringwavestool.model.ResponseBody;
 import cn.tealc.wutheringwavestool.model.kujiequ.sign.SignGood;
