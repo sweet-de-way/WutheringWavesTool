@@ -60,6 +60,14 @@ _**务必确保游戏安装根目录正确，确保游戏安装根目录正确�
 
 如果曾经修改过游戏配置，例如解锁帧数，查看WutheringWaves\Wuthering Waves Game\Client\Saved\Config\WindowsNoEditor的Engine.ini，寻找并移除global=none
 
+或者寻找移除（具体是情况而定，可能部分存在）
+
+```
+[Core.Log]
+Global=off
+LogInteractiveProcess=all off
+```
+
 若上述无法解决，删除Wuthering Waves\Wuthering Waves Game\Client\Saved\Logs后重新尝试
 
 
