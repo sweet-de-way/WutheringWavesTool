@@ -7,12 +7,13 @@
 
 !> _**English is currently under testing, and some text translations may have errors or be incomplete**_
 
-<img src="./assets/image-20241102134455129.png" alt="image-20241102134455129" style="zoom:67%;" />
+<img src="./docs/assets/image-20241102134455129.png" alt="image-20241102134455129" style="zoom:67%;" />
 
 
 WutheringWavesTool is a user-friendly tool that can replace the native launcher for daily use, while providing useful features such as card draw analysis and playtime statistics.<br>
 
 [Download Link](https://github.com/leck995/WutheringWavesTool/releases)
+
 [Document](https://leck995.github.io/WutheringWavesTool/#/en/README)
 
 ## Features
@@ -24,13 +25,13 @@ ___
 
 ## Screenshots
 
-<img src="./assets/image-20241102134455129.png" alt="image-20241102134455129" style="zoom:67%;" />
+<img src="./docs/assets/image-20241102134455129.png" alt="image-20241102134455129" style="zoom:67%;" />
 
-<img src="./assets/image-20241102134445723.png" alt="image-20241102134445723" style="zoom:67%;" />
+<img src="./docs/assets/image-20241102134445723.png" alt="image-20241102134445723" style="zoom:67%;" />
 
-<img src="./assets/image-20241102134437388.png" alt="image-20241102134437388" style="zoom:67%;" />
+<img src="./docs/assets/image-20241102134437388.png" alt="image-20241102134437388" style="zoom:67%;" />
 
-<img src="./assets/image-20241102134429124.png" alt="image-20241102134429124" style="zoom:67%;" />
+<img src="./docs/assets/image-20241102134429124.png" alt="image-20241102134429124" style="zoom:67%;" />
 
 ## Acknowledgments and Support
 ### Thanks to the following open-source projects:
