@@ -11,6 +11,18 @@ import java.time.Duration;
  * @create: 2024-07-10 19:29
  */
 public class HttpRequestUtil {
+
+    public static HttpRequest getRequest(String url) {
+        return HttpRequest.newBuilder()
+                .uri(URI.create(url))
+                .timeout(Duration.ofSeconds(20))
+                .header("Content-Type", "application/x-www-form-urlencoded")
+                .header("User-Agent", "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/126.0.0.0 Safari/537.36 Edg/126.0.0.0")
+                .header("Accept", "application/json, text/plain, */*")
+                .POST(HttpRequest.BodyPublishers.noBody())
+                .build();
+    }
+
     public static HttpRequest getRequest(String url,String token) {
         return HttpRequest.newBuilder()
                 .uri(URI.create(url))

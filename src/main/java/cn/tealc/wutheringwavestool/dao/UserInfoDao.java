@@ -1,7 +1,7 @@
 package cn.tealc.wutheringwavestool.dao;
 
 
-import cn.tealc.wutheringwavestool.model.kujiequ.sign.UserInfo;
+import com.kuro.kujiequ.model.sign.UserInfo;
 import org.apache.commons.dbutils.*;
 import org.apache.commons.dbutils.handlers.BeanHandler;
 import org.apache.commons.dbutils.handlers.BeanListHandler;

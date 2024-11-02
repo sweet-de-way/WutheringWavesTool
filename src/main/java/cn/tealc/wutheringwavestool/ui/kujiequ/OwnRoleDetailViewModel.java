@@ -2,11 +2,11 @@ package cn.tealc.wutheringwavestool.ui.kujiequ;
 
 import cn.tealc.wutheringwavestool.FXResourcesLoader;
 import cn.tealc.wutheringwavestool.model.ResponseBody;
-import cn.tealc.wutheringwavestool.model.kujiequ.roleData.*;
-import cn.tealc.wutheringwavestool.model.kujiequ.roleData.weight.PhantomWeight;
-import cn.tealc.wutheringwavestool.model.kujiequ.sign.SignUserInfo;
+import com.kuro.kujiequ.model.roleData.*;
+import com.kuro.kujiequ.model.roleData.weight.PhantomWeight;
+import com.kuro.kujiequ.model.sign.SignUserInfo;
 import cn.tealc.wutheringwavestool.thread.ImgColorBgTask;
-import cn.tealc.wutheringwavestool.thread.kujiequ.role.GameRoleDetailTask;
+import com.kuro.kujiequ.thread.role.GameRoleDetailTask;
 import cn.tealc.wutheringwavestool.util.LocalDataManager;
 import cn.tealc.wutheringwavestool.util.LocalResourcesManager;
 import de.saxsys.mvvmfx.ViewModel;

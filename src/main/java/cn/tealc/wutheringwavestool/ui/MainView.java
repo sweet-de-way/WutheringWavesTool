@@ -12,6 +12,8 @@ import cn.tealc.wutheringwavestool.model.message.MessageInfo;
 import cn.tealc.wutheringwavestool.model.message.MessageType;
 import cn.tealc.wutheringwavestool.thread.MainBackgroundTask;
 import cn.tealc.wutheringwavestool.ui.kujiequ.*;
+import cn.tealc.wutheringwavestool.ui.resource.UpdateView;
+import cn.tealc.wutheringwavestool.ui.resource.UpdateViewModel;
 import cn.tealc.wutheringwavestool.util.LanguageManager;
 import cn.tealc.wutheringwavestool.util.LocalResourcesManager;
 import com.jfoenixN.controls.JFXDialog;
@@ -441,6 +443,20 @@ public class MainView implements Initializable,FxmlView<MainViewModel> {
             toggleButton.setSelected(true);
         }
     }
+
+    @FXML
+    void toUpdate(ActionEvent event) {
+        ToggleButton toggleButton= (ToggleButton) event.getSource();
+        if (toggleButton.isSelected()){
+            ViewTuple<UpdateView, UpdateViewModel> viewTuple = FluentViewLoader.fxmlView(UpdateView.class).load();
+            bgPane.setVisible(false);
+            child.getChildren().setAll(viewTuple.getView());
+            startNavAnim();
+        }else {
+            toggleButton.setSelected(true);
+        }
+    }
+
 
     @FXML
     void toSupport(ActionEvent event) {

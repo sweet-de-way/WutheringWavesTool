@@ -2,9 +2,9 @@ package cn.tealc.wutheringwavestool.ui.kujiequ;
 
 import atlantafx.base.controls.ToggleSwitch;
 import cn.tealc.wutheringwavestool.base.Config;
-import cn.tealc.wutheringwavestool.model.kujiequ.sign.SignGood;
-import cn.tealc.wutheringwavestool.model.kujiequ.sign.SignRecord;
-import cn.tealc.wutheringwavestool.model.kujiequ.sign.UserInfo;
+import com.kuro.kujiequ.model.sign.SignGood;
+import com.kuro.kujiequ.model.sign.SignRecord;
+import com.kuro.kujiequ.model.sign.UserInfo;
 
 import cn.tealc.wutheringwavestool.util.LocalResourcesManager;
 import de.saxsys.mvvmfx.FxmlView;

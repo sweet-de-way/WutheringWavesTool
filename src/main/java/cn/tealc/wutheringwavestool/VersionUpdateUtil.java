@@ -2,8 +2,8 @@ package cn.tealc.wutheringwavestool;
 
 import cn.tealc.wutheringwavestool.dao.JdbcUtils;
 import cn.tealc.wutheringwavestool.dao.UserInfoDao;
-import cn.tealc.wutheringwavestool.model.kujiequ.sign.SignUserInfo;
-import cn.tealc.wutheringwavestool.model.kujiequ.sign.UserInfo;
+import com.kuro.kujiequ.model.sign.SignUserInfo;
+import com.kuro.kujiequ.model.sign.UserInfo;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 

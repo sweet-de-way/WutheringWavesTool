@@ -9,8 +9,7 @@ open module cn.tealc.wutheringwavestool {
     requires atlantafx.base;
     requires com.fasterxml.jackson.databind;
     requires de.saxsys.mvvmfx;
-    requires cn.tealc.teafx ;
-
+    requires cn.tealc.teafx;
     requires jdk.crypto.cryptoki;
     requires org.slf4j;
     requires com.sun.jna.platform;
@@ -26,15 +25,14 @@ open module cn.tealc.wutheringwavestool {
     requires ch.qos.logback.core;
     requires ch.qos.logback.classic;
 
-
     exports cn.tealc.wutheringwavestool;
     exports cn.tealc.wutheringwavestool.model;
-    exports cn.tealc.wutheringwavestool.model.kujiequ.towerData;
-    exports cn.tealc.wutheringwavestool.model.kujiequ.roleData to com.fasterxml.jackson.databind;
-    exports cn.tealc.wutheringwavestool.model.kujiequ.roleData.user to com.fasterxml.jackson.databind;
+    exports com.kuro.kujiequ.model.towerData;
+    exports com.kuro.kujiequ.model.roleData to com.fasterxml.jackson.databind;
+    exports com.kuro.kujiequ.model.roleData.user to com.fasterxml.jackson.databind;
     exports cn.tealc.wutheringwavestool.model.analysis to com.fasterxml.jackson.databind;
-    exports cn.tealc.wutheringwavestool.model.kujiequ.sign to com.fasterxml.jackson.databind;
-    exports cn.tealc.wutheringwavestool.model.kujiequ.roleData.weight;
+    exports com.kuro.kujiequ.model.sign to com.fasterxml.jackson.databind;
+    exports com.kuro.kujiequ.model.roleData.weight;
 
     exports cn.tealc.wutheringwavestool.base;
     exports cn.tealc.wutheringwavestool.jna;

@@ -1,6 +1,6 @@
 package cn.tealc.wutheringwavestool.ui.component;
 
-import cn.tealc.wutheringwavestool.model.kujiequ.roleData.Role;
+import com.kuro.kujiequ.model.roleData.Role;
 import javafx.scene.control.Label;
 import javafx.scene.control.ListCell;
 import javafx.scene.image.Image;

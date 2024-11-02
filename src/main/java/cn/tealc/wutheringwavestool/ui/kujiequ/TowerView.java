@@ -1,10 +1,10 @@
 package cn.tealc.wutheringwavestool.ui.kujiequ;
 
 import cn.tealc.wutheringwavestool.FXResourcesLoader;
-import cn.tealc.wutheringwavestool.model.kujiequ.towerData.Difficulty;
-import cn.tealc.wutheringwavestool.model.kujiequ.towerData.Floor;
-import cn.tealc.wutheringwavestool.model.kujiequ.towerData.SimpleRole;
-import cn.tealc.wutheringwavestool.model.kujiequ.towerData.TowerArea;
+import com.kuro.kujiequ.model.towerData.Difficulty;
+import com.kuro.kujiequ.model.towerData.Floor;
+import com.kuro.kujiequ.model.towerData.SimpleRole;
+import com.kuro.kujiequ.model.towerData.TowerArea;
 import cn.tealc.wutheringwavestool.util.LocalResourcesManager;
 import de.saxsys.mvvmfx.FxmlView;
 import de.saxsys.mvvmfx.InjectViewModel;

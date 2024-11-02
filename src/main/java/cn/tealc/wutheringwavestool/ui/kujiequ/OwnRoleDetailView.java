@@ -1,9 +1,9 @@
 package cn.tealc.wutheringwavestool.ui.kujiequ;
 
-import cn.tealc.wutheringwavestool.model.kujiequ.roleData.FetterDetail;
-import cn.tealc.wutheringwavestool.model.kujiequ.roleData.Phantom;
-import cn.tealc.wutheringwavestool.model.kujiequ.roleData.PhoantomMainProps;
-import cn.tealc.wutheringwavestool.model.kujiequ.roleData.Role;
+import com.kuro.kujiequ.model.roleData.FetterDetail;
+import com.kuro.kujiequ.model.roleData.Phantom;
+import com.kuro.kujiequ.model.roleData.PhoantomMainProps;
+import com.kuro.kujiequ.model.roleData.Role;
 import cn.tealc.wutheringwavestool.ui.component.OwnRoleDetailCell;
 import cn.tealc.wutheringwavestool.util.LocalResourcesManager;
 import de.saxsys.mvvmfx.FxmlView;

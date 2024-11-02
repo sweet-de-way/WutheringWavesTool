@@ -86,6 +86,11 @@
                                     <FontIcon iconLiteral="mdral-home" styleClass="hit-btn" />
                                  </graphic>
                               </ToggleButton>
+                              <ToggleButton accessibleText="kujiequ" alignment="CENTER_LEFT" ellipsisString="" layoutX="15.0" layoutY="314.0" mnemonicParsing="false" onAction="#toUpdate" prefWidth="140.0" styleClass="icon-only" text="%ui.main.button.nav.type08" textOverrun="CLIP" toggleGroup="$navToggleGroup">
+                                 <graphic>
+                                    <FontIcon iconLiteral="mdmz-navigation" />
+                                 </graphic>
+                              </ToggleButton>
                               <ToggleButton alignment="CENTER_LEFT" ellipsisString="" layoutX="15.0" layoutY="104.0" mnemonicParsing="false" onAction="#toStartAppSetting" prefWidth="140.0" styleClass="icon-only" text="%ui.main.button.nav.type03" textOverrun="CLIP" toggleGroup="$navToggleGroup">
                                  <graphic>
                                     <FontIcon iconLiteral="mdmz-widgets" />
