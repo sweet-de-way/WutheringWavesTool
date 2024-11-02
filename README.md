@@ -1,17 +1,12 @@
 
-## [中文](https://github.com/leck995/WutheringWavesTool/blob/new-ui/README.md) | [ENGLISH](https://github.com/leck995/WutheringWavesTool/blob/new-ui/docs/en/README=.md)
+## [中文](https://github.com/leck995/WutheringWavesTool/blob/new-ui/README.md) | [ENGLISH](https://github.com/leck995/WutheringWavesTool/blob/new-ui/docs/en/README.md)
 ***
 ## 简介
-
 鸣潮助手是一款鸣潮的第三方工具，可替代原生的启动器，同时内置多个有用的小功能，致力于改善PC端鸣潮的游戏体验与游戏数据管理。支持国服，国际服使用。
 
+[点此查看文档](https://leck995.github.io/WutheringWavesTool/)
+
 <img src="./docs/assets/image-20241102050101441.png" alt="image-20241102050101441" style="zoom:67%;" />
-
-
-
-
-
-
 
 ## 功能
 ___
@@ -31,27 +26,10 @@ ___
 ## 部分截图
 
 <img src="./docs/assets/image-20241102052437739.png" alt="image-20241102052437739" style="zoom:67%;" />
-
 <img src="./docs/assets/image-20241102052754433.png" alt="image-20241102052754433" style="zoom:67%;" />
-
-
-
 <img src="./docs/assets/image-20241102052903390.png" alt="image-20241102052903390" style="zoom:67%;" />
-
 <img src="./docs/assets/image-20241102052941704.png" alt="image-20241102052941704" style="zoom:67%;" />
-
-
-
 <img src="./docs/assets/image-20241102052914414.png" alt="image-20241102052914414" style="zoom:67%;" />
-
-
-
-
-
-
-
-
-
 
 
 ## 感谢与支持
