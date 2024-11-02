@@ -1,5 +1,5 @@
 
-## [中文](https://github.com/leck995/WutheringWavesTool/blob/new-ui/README.md) | [ENGLISH](https://github.com/leck995/WutheringWavesTool/blob/new-ui/docs/en/README.md)
+## [中文](https://github.com/leck995/WutheringWavesTool/blob/new-ui/README.md) | [ENGLISH](https://github.com/leck995/WutheringWavesTool/blob/new-ui/README_EN.md)
 ***
 ## 简介
 鸣潮助手是一款鸣潮的第三方工具，可替代原生的启动器，同时内置多个有用的小功能，致力于改善PC端鸣潮的游戏体验与游戏数据管理。支持国服，国际服使用。
