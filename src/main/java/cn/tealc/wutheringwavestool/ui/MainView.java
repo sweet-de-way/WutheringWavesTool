@@ -178,6 +178,7 @@ public class MainView implements Initializable,FxmlView<MainViewModel> {
             ViewTuple<AnalysisPoolView, AnalysisPoolViewModel> viewTuple = FluentViewLoader.fxmlView(AnalysisPoolView.class).load();
             child.getChildren().setAll(viewTuple.getView());
             navToggleGroup.selectToggle(analysisBtn);
+            bgPane.setVisible(false);
         }else {
             ViewTuple<HomeView, HomeViewModel> viewTuple = FluentViewLoader.fxmlView(HomeView.class).load();
             child.getChildren().setAll(viewTuple.getView());
