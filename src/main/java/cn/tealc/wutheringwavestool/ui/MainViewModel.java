@@ -4,6 +4,7 @@ import cn.tealc.wutheringwavestool.base.Config;
 import cn.tealc.wutheringwavestool.base.NotificationKey;
 import cn.tealc.wutheringwavestool.dao.UserInfoDao;
 import cn.tealc.wutheringwavestool.model.ResponseBody;
+import cn.tealc.wutheringwavestool.thread.GameLogFileAnalysisTask;
 import com.kuro.kujiequ.model.sign.UserInfo;
 import com.kuro.kujiequ.model.towerData.DifficultyTotal;
 import cn.tealc.wutheringwavestool.model.message.MessageInfo;
@@ -37,6 +38,7 @@ public class MainViewModel implements ViewModel {
             Thread.startVirtualThread(task);
         }
         updateKujiequ();
+
     }
 
 
