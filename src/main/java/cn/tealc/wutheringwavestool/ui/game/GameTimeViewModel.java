@@ -1,4 +1,4 @@
-package cn.tealc.wutheringwavestool.ui;
+package cn.tealc.wutheringwavestool.ui.game;
 
 import cn.tealc.wutheringwavestool.base.Config;
 import cn.tealc.wutheringwavestool.dao.GameTimeDao;

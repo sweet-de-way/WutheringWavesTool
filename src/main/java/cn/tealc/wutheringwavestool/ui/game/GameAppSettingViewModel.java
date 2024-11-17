@@ -1,14 +1,17 @@
-package cn.tealc.wutheringwavestool.ui;
+package cn.tealc.wutheringwavestool.ui.game;
 
 import cn.tealc.wutheringwavestool.base.NotificationKey;
 import cn.tealc.wutheringwavestool.dao.GameSettingDao;
 import cn.tealc.wutheringwavestool.model.message.MessageInfo;
 import cn.tealc.wutheringwavestool.model.message.MessageType;
+import cn.tealc.wutheringwavestool.util.GameResourcesManager;
 import cn.tealc.wutheringwavestool.util.LanguageManager;
 import de.saxsys.mvvmfx.MvvmFX;
 import de.saxsys.mvvmfx.ViewModel;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.util.Pair;
+
+import java.io.File;
 
 /**
  * @program: WutheringWavesTool
@@ -36,11 +39,23 @@ public class GameAppSettingViewModel implements ViewModel {
      * @date:   2024/10/19
      */
     public void setFps(String value) {
-        GameSettingDao gameSettingDao = new GameSettingDao();
-        boolean customFrameRate = gameSettingDao.updateSettingValueByKey("CustomFrameRate", value);
-        if (!customFrameRate) {
-            MvvmFX.getNotificationCenter().publish(NotificationKey.MESSAGE,new MessageInfo(MessageType.ERROR, LanguageManager.getString("ui.game_app.setting.fps.message")));
+        boolean exist = hasDbFile();
+        if (exist) {
+            GameSettingDao gameSettingDao = new GameSettingDao();
+            boolean customFrameRate = gameSettingDao.updateSettingValueByKey("CustomFrameRate", value);
+            if (!customFrameRate) {
+                MvvmFX.getNotificationCenter().publish(NotificationKey.MESSAGE,new MessageInfo(MessageType.ERROR, LanguageManager.getString("ui.game_app.setting.fps.message01")));
+            }
+        }else {
+            MvvmFX.getNotificationCenter().publish(NotificationKey.MESSAGE,new MessageInfo(MessageType.ERROR, LanguageManager.getString("ui.game_app.setting.fps.message02")));
         }
+
+    }
+
+    public boolean hasDbFile(){
+        File gameDB = GameResourcesManager.getGameDB();
+        return gameDB != null;
+
     }
 
 
