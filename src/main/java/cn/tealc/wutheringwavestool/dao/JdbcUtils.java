@@ -95,12 +95,33 @@ public class JdbcUtils {
                       endTime INTEGER NOT NULL ,
                       UNIQUE (area_id, floor, endTime));
                     """;
+
+            String createGameRecord="""
+                    CREATE TABLE IF NOT EXISTS game_record (
+                        id INTEGER PRIMARY KEY AUTOINCREMENT,
+                        role_id VARCHAR,
+                        create_date VARCHAR NOT NULL,
+                        role_change INTEGER DEFAULT 0, -- 切换角色次数
+                        role_death INTEGER DEFAULT 0, -- 死亡次数
+                        battle INTEGER DEFAULT 0, -- 战斗次数
+                        phantom_get INTEGER DEFAULT 0, -- 获取声骸次数
+                        phantom_call_skill INTEGER DEFAULT 0, -- 召唤声骸技能次数
+                        phantom_transform_skill INTEGER DEFAULT 0, -- 变身声骸召唤次数
+                        paralysis INTEGER DEFAULT 0, -- 怪物瘫痪次数
+                        transfer INTEGER DEFAULT 0, -- 传送次数
+                        parry_front INTEGER DEFAULT 0, -- 极限闪避次数
+                        parry_back INTEGER DEFAULT 0, -- 极限闪避次数
+                        parry_attack INTEGER DEFAULT 0, -- 极限闪避并反击次数
+                        UNIQUE (role_id, create_date)
+                    );
+                    """;
             Statement st = con.createStatement();
             st.execute(createGameTime);
             st.execute(createGameRole);
             st.execute(createUserInfo);
             st.execute(createSignHistory);
             st.execute(createGameTower);
+            st.execute(createGameRecord);
             st.close();
             con.close();
         } catch (SQLException e) {

@@ -9,6 +9,7 @@ import cn.tealc.wutheringwavestool.jna.GameAppListener;
 import cn.tealc.wutheringwavestool.model.ResponseBody;
 import cn.tealc.wutheringwavestool.model.SourceType;
 import cn.tealc.wutheringwavestool.model.game.GameTime;
+import cn.tealc.wutheringwavestool.util.GameResourcesManager;
 import com.kuro.kujiequ.model.roleData.user.BoxInfo;
 import com.kuro.kujiequ.model.roleData.user.RoleDailyData;
 import com.kuro.kujiequ.model.roleData.user.RoleInfo;
@@ -38,6 +39,7 @@ import java.time.Instant;
 import java.time.LocalDate;
 import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 import java.util.stream.Stream;
@@ -281,8 +283,6 @@ public class HomeViewModel implements ViewModel {
 
 
 
-
-
     public void signAndGame() {
         sign();
         startGame();
@@ -300,9 +300,14 @@ public class HomeViewModel implements ViewModel {
     }
 
     public void startGame() {
+        //先删除游戏过去的日志
+        deleteLogFiles();
+
+
         String dir = Config.setting.getGameRootDir();
         if (dir != null) {
             File exe = null;
+            //当自定义启动程序时
             if (Config.setting.isGameStartAppCustom()){
                 exe=new File(Config.setting.getGameStarAppPath());
                 if (!exe.exists()) {
@@ -314,15 +319,11 @@ public class HomeViewModel implements ViewModel {
                                     )));
                     return;
                 }
-            }else {
-                if (Config.setting.getGameRootDirSource() == SourceType.WE_GAME) {
-                    exe = new File(dir + File.separator + "Wuthering Waves.exe");
-                } else {
-                    exe = new File(dir + File.separator + "Wuthering Waves Game" + File.separator + "Wuthering Waves.exe");
-                }
+            }else { //默认启动程序Wuthering Waves.exe
+                exe = GameResourcesManager.getGameExeBase();
             }
 
-            if (exe.exists()) {
+            if (exe != null) {
                 if (Config.setting.isUserAdvanceGameSettings()){ //使用高级启动设置
                     String appParams = Config.setting.getAppParams();
                     if (appParams != null && !appParams.isEmpty()) {
@@ -339,9 +340,10 @@ public class HomeViewModel implements ViewModel {
                         runExeByCustom(exe.getAbsolutePath());
                     }
                     //runExeByCustom(exe.getAbsolutePath(),"-dx11","-SkipSplash");
-                }else {
+                }else { //默认启动
                     runExe(exe);
                 }
+                hideMainWindow();
             } else {
                 MvvmFX.getNotificationCenter().publish(NotificationKey.MESSAGE,
                         new MessageInfo(MessageType.WARNING, String.format(LanguageManager.getString("ui.home.message.type03"), exe.getPath())));
@@ -353,6 +355,17 @@ public class HomeViewModel implements ViewModel {
     }
 
 
+    /**
+     * @description: 启动时隐藏窗口
+     * @param:
+     * @return  void
+     * @date:   2024/11/16
+     */
+    private void hideMainWindow() {
+        if (Config.setting.isHideWhenGameStart()){
+            MainApplication.window.hide();
+        }
+    }
 
     /**
      * @description: 第一个参数必须是启动器的路径
@@ -362,28 +375,27 @@ public class HomeViewModel implements ViewModel {
      */
     private void runExeByCustom(String... params) {
         Thread.startVirtualThread(()->{
-            ProcessBuilder processBuilder = new ProcessBuilder(params);
+            String[] command2 = {"cmd.exe", "/c", "start", "\"\""}; //权限不够，提权
+            String[] mergedArray = Stream.concat(Stream.of(command2), Stream.of(params))
+                    .toArray(String[]::new);
+            ProcessBuilder processBuilder = new ProcessBuilder(mergedArray);
             try {
                 processBuilder.start();
-                //process.waitFor();目前的时长统计已不再需要该方法，仅作念想
             } catch (IOException e) {
-                LOG.info("无法启动程序,进行提权启动");
-                String[] command2 = {"cmd.exe", "/c", "start", "\"\""}; //权限不够，提权
-                String[] mergedArray = Stream.concat(Stream.of(command2), Stream.of(params))
-                        .toArray(String[]::new);
-                ProcessBuilder processBuilder2 = new ProcessBuilder(mergedArray);
-                try {
-                    processBuilder2.start();
-                } catch (IOException ex) {
-                    LOG.error("提权后依然无法启动程序",e);
-                    MvvmFX.getNotificationCenter().publish(NotificationKey.MESSAGE,new MessageInfo(MessageType.ERROR,"自定义参数方式启动失败:"+e.getMessage()));
-                }
+                MainApplication.window.show();
+                LOG.error("高级启动无法启动鸣潮",e);
+                MvvmFX.getNotificationCenter().publish(NotificationKey.MESSAGE,new MessageInfo(MessageType.ERROR,"高级启动,自定义参数方式启动失败:"+e.getMessage()));
             }
-
         });
     }
 
 
+    /**
+     * @description: 默认启动
+     * @param:	exe
+     * @return  void
+     * @date:   2024/11/16
+     */
     private void runExe(File exe){
         try {
             Desktop.getDesktop().open(exe);
@@ -395,6 +407,25 @@ public class HomeViewModel implements ViewModel {
             MainApplication.window.show();
         }
     }
+
+
+    /**
+     * @description: 删除游戏日志，用于保证每次启动日志都是最新的，不重复的
+     * @param:
+     * @return  void
+     * @date:   2024/11/16
+     */
+    private void deleteLogFiles(){
+        File dir = GameResourcesManager.getGameLogDir();
+        if (dir != null) {
+            File[] files = dir.listFiles();
+            if (files != null) {
+                Arrays.stream(files).forEach(File::delete);
+            }
+        }
+    }
+
+
 
     public String getEnergyText() {
         return energyText.get();

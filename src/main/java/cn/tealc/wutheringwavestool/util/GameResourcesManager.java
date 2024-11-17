@@ -109,4 +109,27 @@ public class GameResourcesManager {
         }
         return exe;
     }
+
+    /**
+     * @description: 获取游戏日志文件夹
+     * @param:
+     * @return  java.io.File
+     * @date:   2024/11/13
+     */
+    public static File getGameLogDir() {
+        String dir = Config.setting.getGameRootDir();
+        File exe = null;
+        if (dir != null) {
+            if (Config.setting.getGameRootDirSource() == SourceType.WE_GAME) {
+                exe = new File(dir + File.separator + "Client/Saved/Logs");
+            } else {
+                exe = new File(dir + File.separator + "Wuthering Waves Game/Client/Saved/Logs");
+            }
+            if (!exe.exists()) {
+                return null;
+            }
+        }
+        return exe;
+    }
+
 }

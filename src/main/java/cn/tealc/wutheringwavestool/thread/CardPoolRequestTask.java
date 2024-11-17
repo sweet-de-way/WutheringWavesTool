@@ -116,6 +116,7 @@ public class CardPoolRequestTask extends Task<Map<String, List<CardInfo>>> {
     }
 
     private Message query(Map<String,String> params,String cardPoolType) throws IOException, InterruptedException {
+
         params.replace("cardPoolType",cardPoolType);
         HttpClient client = HttpClient.newHttpClient();
         ObjectMapper mapper = new ObjectMapper();
@@ -123,14 +124,18 @@ public class CardPoolRequestTask extends Task<Map<String, List<CardInfo>>> {
         Country_URL(params);
         HttpRequest request = HttpRequest.newBuilder()
                 .uri(URI.create(REQUEST_URL))
-                .timeout(Duration.ofSeconds(20))
+                .timeout(Duration.ofSeconds(10))
                 .header("Content-type","application/json")
                 .POST(HttpRequest.BodyPublishers.ofString(s))
                 .build();
+
+        LOG.debug("正在获取抽卡连接：{}",request.uri().toString());
         HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
         if (response.statusCode() == 200) {
+            LOG.debug("获取到抽卡Json：{}",response.body());
             return mapper.readValue(response.body(), Message.class);
         }else {
+            LOG.debug("无法获取到抽卡连接，错误代码{}",response.statusCode());
             return null;
         }
     }

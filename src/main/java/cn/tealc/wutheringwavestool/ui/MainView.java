@@ -11,6 +11,7 @@ import cn.tealc.wutheringwavestool.model.message.MessageInfo;
 
 import cn.tealc.wutheringwavestool.model.message.MessageType;
 import cn.tealc.wutheringwavestool.thread.MainBackgroundTask;
+import cn.tealc.wutheringwavestool.ui.game.*;
 import cn.tealc.wutheringwavestool.ui.kujiequ.*;
 import cn.tealc.wutheringwavestool.ui.resource.UpdateView;
 import cn.tealc.wutheringwavestool.ui.resource.UpdateViewModel;
@@ -54,7 +55,6 @@ import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URL;
 import java.util.Iterator;
-import java.util.Locale;
 import java.util.ResourceBundle;
 
 /**
@@ -409,7 +409,7 @@ public class MainView implements Initializable,FxmlView<MainViewModel> {
     void toGameTime(ActionEvent event) {
         ToggleButton toggleButton= (ToggleButton) event.getSource();
         if (toggleButton.isSelected()){
-            ViewTuple<GameTimeView, GameTimeViewModel> viewTuple = FluentViewLoader.fxmlView(GameTimeView.class).load();
+            ViewTuple<GameStatisticsView, GameStatisticsViewModel> viewTuple = FluentViewLoader.fxmlView(GameStatisticsView.class).load();
             bgPane.setVisible(false);
             child.getChildren().setAll(viewTuple.getView());
             startNavAnim();
