@@ -360,7 +360,7 @@ public class SettingView implements Initializable, FxmlView<SettingViewModel> {
     @FXML
     void toWiki(ActionEvent event) {
         try {
-            Desktop.getDesktop().browse(new URI("https://github.com/leck995/WutheringWavesTool/wiki"));
+            Desktop.getDesktop().browse(new URI("https://wave.tealc.fun/#/"));
         } catch (IOException | URISyntaxException e) {
             LOG.info(e.getMessage());
         }
