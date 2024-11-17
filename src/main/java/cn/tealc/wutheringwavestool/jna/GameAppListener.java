@@ -1,11 +1,12 @@
 package cn.tealc.wutheringwavestool.jna;
 
-import cn.tealc.wutheringwavestool.base.Config;
 import cn.tealc.wutheringwavestool.MainApplication;
+import cn.tealc.wutheringwavestool.base.Config;
 import cn.tealc.wutheringwavestool.base.NotificationKey;
 import cn.tealc.wutheringwavestool.dao.GameTimeDao;
 import cn.tealc.wutheringwavestool.dao.UserInfoDao;
 import cn.tealc.wutheringwavestool.model.game.GameTime;
+import cn.tealc.wutheringwavestool.thread.GameLogFileAnalysisTask;
 import com.kuro.kujiequ.model.sign.UserInfo;
 import com.sun.jna.Native;
 import com.sun.jna.platform.win32.User32;
@@ -27,7 +28,7 @@ import java.time.temporal.ChronoUnit;
  * @create: 2024-07-10 23:29
  */
 public class GameAppListener implements WinUser.WinEventProc{
-    private final Logger LOG= LoggerFactory.getLogger(GameAppListener.class);
+    private static final Logger LOG= LoggerFactory.getLogger(GameAppListener.class);
     private static GameAppListener gameAppListener;
     private WinDef.HWND game;
     private boolean start=false;//标记游戏打开了
@@ -51,7 +52,7 @@ public class GameAppListener implements WinUser.WinEventProc{
         user32.GetWindowText(hwnd, buffer, buffer.length);
         String title = Native.toString(buffer);
         //LOG.debug("当前前台窗口是:{}",title);
-        if (title.equals("鸣潮  ") || title.equals("Wuthering Waves  ") ){
+        if (title.equals("鸣潮  ") || title.equals("Wuthering Waves  ")  || title.equals("鳴潮  ") ){
             if (!start){
                 game=hwnd;
                 start = true;
@@ -62,107 +63,136 @@ public class GameAppListener implements WinUser.WinEventProc{
             if (start){
                 long endGameTime = System.currentTimeMillis(); //游戏结束时间
                 long totalGameTime = endGameTime - startGameTime;//总共游玩时间
-                if (totalGameTime >  60 * 1000){ //鸣潮游戏与登陆器是分开的，这回导致出现多次调用，故设置1分钟来过滤
+                if (totalGameTime >  60 * 1000){ //鸣潮登录界面本质是一个嵌套的浏览器（呸），所以鸣潮游戏与登陆器是分开的，这会导致出现多次前台窗口切换，故设置1分钟来过滤
                     MvvmFX.getNotificationCenter().publish(NotificationKey.HOME_GAME_TIME_UPDATE,totalGameTime);
                 }
-                save();
+                boolean isAlive = gameIsAlive();
+                if (!isAlive){
+                    start = false;
+                    boolean isExit = save();
+                    analysisLog(isExit);
+                }
+
             }
         }else {
             if (start){ //只要游戏启动过，start必为true,所以不用处理其他情况
                 long endGameTime = System.currentTimeMillis(); //游戏结束时间
                 long totalGameTime = endGameTime - startGameTime;//总共游玩时间
-                if (totalGameTime > 60 * 1000){//鸣潮游戏与登陆器是分开的，这回导致出现多次调用，故设置1分钟来过滤
+                if (totalGameTime > 60 * 1000){//鸣潮登录界面本质是一个嵌套的浏览器（呸），所以鸣潮游戏与登陆器是分开的，这会导致出现多次前台窗口切换，故设置1分钟来过滤
                     MvvmFX.getNotificationCenter().publish(NotificationKey.HOME_GAME_TIME_UPDATE,totalGameTime);
                 }
-                save();
+                boolean isAlive = gameIsAlive();
+                if (!isAlive){
+                    start = false;
+                    boolean isExit = save();
+                    analysisLog(isExit);
+                }
             }
         }
     }
 
     /**
-     * @description: 统计游玩时间
+     * @description: 判断当前游戏窗口是否存在
      * @param:
+     * @return  boolean
+     * @date:   2024/11/16
+     */
+    private boolean gameIsAlive(){
+        return user32.IsWindow(game);
+    }
+
+    /**
+     * @description: 统计游玩时间
+     * @param:  boolean  判断是否需要关闭助手
      * @return  void
      * @date:   2024/7/21
      */
-    private void save(){
-        if (!user32.IsWindow(game)){//窗口已经被关闭
-            start=false;
-            long endGameTime = System.currentTimeMillis(); //游戏结束时间
-            long totalGameTime = endGameTime - startGameTime;//总共游玩时间
+    private boolean save(){
+        long endGameTime = System.currentTimeMillis(); //游戏结束时间
+        long totalGameTime = endGameTime - startGameTime;//总共游玩时间
 
-            //获取游戏开始时间日期
-            Instant instant = Instant.ofEpochMilli(startGameTime);
-            ZoneId zone = ZoneId.systemDefault();
-            ZonedDateTime zdt = instant.atZone(zone);
-            LocalDateTime startDateTime = zdt.toLocalDateTime();
-            LocalDate startDate = zdt.toLocalDate();
+        //获取游戏开始时间日期
+        Instant instant = Instant.ofEpochMilli(startGameTime);
+        ZoneId zone = ZoneId.systemDefault();
+        ZonedDateTime zdt = instant.atZone(zone);
+        LocalDateTime startDateTime = zdt.toLocalDateTime();
+        LocalDate startDate = zdt.toLocalDate();
 
-            //获取结束日期
-            LocalDate localDate = LocalDate.now();
+        //获取结束日期
+        LocalDate localDate = LocalDate.now();
 
-            DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
-            GameTimeDao dao=new GameTimeDao();
+        DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+        GameTimeDao dao=new GameTimeDao();
 
 
-            UserInfoDao userInfoDao = new UserInfoDao();
-            UserInfo currentUser = userInfoDao.getMain();
+        UserInfoDao userInfoDao = new UserInfoDao();
+        UserInfo currentUser = userInfoDao.getMain();
 
-            if (startDate.isBefore(localDate)){ //跨天
-                LocalDateTime endOfDay = startDate.plusDays(1).atStartOfDay();
-                long millisecondsUntilEndOfDay = ChronoUnit.MILLIS.between(startDateTime, endOfDay);
-                GameTime gameTime1=new GameTime();
-                if (currentUser != null){
-                    gameTime1.setRoleId(currentUser.getRoleId());
-                }
-                gameTime1.setGameDate(dateTimeFormatter.format(startDate));
-                gameTime1.setStartTime(startGameTime);
-                gameTime1.setEndTime(startGameTime + millisecondsUntilEndOfDay);
-                gameTime1.setDuration(millisecondsUntilEndOfDay);
-                dao.addTime(gameTime1);
-                LOG.info("检测到鸣潮已经结束且跨天，保存昨天时间{}",gameTime1);
-
-
-                GameTime gameTime=new GameTime();
-                if (currentUser != null){
-                    gameTime.setRoleId(currentUser.getRoleId());
-                }
-                gameTime.setGameDate(dateTimeFormatter.format(localDate));
-                long todayMillis = totalGameTime - millisecondsUntilEndOfDay;
-                gameTime.setStartTime(endGameTime-todayMillis);
-                gameTime.setEndTime(endGameTime);
-                gameTime.setDuration(todayMillis);
-
-                dao.addTime(gameTime);
-                LOG.info("检测到鸣潮已经结束且跨天，保存今天时间{}",gameTime);
-
-            }else {
-                GameTime gameTime=new GameTime();
-
-                if (currentUser != null){
-                    gameTime.setRoleId(currentUser.getRoleId());
-                }
-                gameTime.setGameDate(dateTimeFormatter.format(localDate));
-                gameTime.setStartTime(startGameTime);
-                gameTime.setEndTime(endGameTime);
-                gameTime.setDuration(totalGameTime);
-
-                dao.addTime(gameTime);
-                LOG.info("检测到鸣潮已经结束，保存时间{}",gameTime);
+        if (startDate.isBefore(localDate)){ //跨天
+            LocalDateTime endOfDay = startDate.plusDays(1).atStartOfDay();
+            long millisecondsUntilEndOfDay = ChronoUnit.MILLIS.between(startDateTime, endOfDay);
+            GameTime gameTime1=new GameTime();
+            if (currentUser != null){
+                gameTime1.setRoleId(currentUser.getRoleId());
             }
+            gameTime1.setGameDate(dateTimeFormatter.format(startDate));
+            gameTime1.setStartTime(startGameTime);
+            gameTime1.setEndTime(startGameTime + millisecondsUntilEndOfDay);
+            gameTime1.setDuration(millisecondsUntilEndOfDay);
+            dao.addTime(gameTime1);
+            LOG.info("检测到鸣潮已经结束且跨天，保存昨天时间{}",gameTime1);
 
 
-            //判断是否开启自动退出，退出即结束程序
-            if (Config.setting.isExitWhenGameOver()){
-                if (totalGameTime > 60000){ //当游戏时长大于1分钟才自动关闭，以防鸣潮SB更新重启
-                    MainApplication.exit();
-                }else {
-                    LOG.info("检测到鸣潮已经结束，游戏时长小于一分钟，不自动停止");
-                }
+            GameTime gameTime=new GameTime();
+            if (currentUser != null){
+                gameTime.setRoleId(currentUser.getRoleId());
             }
+            gameTime.setGameDate(dateTimeFormatter.format(localDate));
+            long todayMillis = totalGameTime - millisecondsUntilEndOfDay;
+            gameTime.setStartTime(endGameTime-todayMillis);
+            gameTime.setEndTime(endGameTime);
+            gameTime.setDuration(todayMillis);
 
+            dao.addTime(gameTime);
+            LOG.info("检测到鸣潮已经结束且跨天，保存今天时间{}",gameTime);
+
+        }else {
+            GameTime gameTime=new GameTime();
+
+            if (currentUser != null){
+                gameTime.setRoleId(currentUser.getRoleId());
+            }
+            gameTime.setGameDate(dateTimeFormatter.format(localDate));
+            gameTime.setStartTime(startGameTime);
+            gameTime.setEndTime(endGameTime);
+            gameTime.setDuration(totalGameTime);
+
+            dao.addTime(gameTime);
+            LOG.info("检测到鸣潮已经结束，保存时间{}",gameTime);
+        }
+        if (totalGameTime > 60000){ //当游戏时长大于1分钟才自动关闭，以防鸣潮SB更新重启
+            return true;
+        }else {
+            LOG.info("检测到鸣潮已经结束，游戏时长小于一分钟，不自动退出助手");
+            return false;
         }
     }
+
+
+    private void analysisLog(boolean exit){
+        GameLogFileAnalysisTask task = new GameLogFileAnalysisTask();
+        task.setOnSucceeded(workerStateEvent -> {
+            //判断是否开启自动退出，退出即结束程序
+            if (Config.setting.isExitWhenGameOver()){
+                if (exit){ //当游戏时长大于1分钟才自动关闭，以防鸣潮SB更新重启
+                    MainApplication.exit();
+                }
+            }
+        });
+        Thread.startVirtualThread(task);
+    }
+
+
 
 
 
