@@ -11,7 +11,7 @@ import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
  */
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class ResponseBody<T> {
-    private Integer code;
+    private Integer code; //code可以随意设置，但成功必须是200
     private String msg;
     private T data;
     private Boolean success;
@@ -31,6 +31,8 @@ public class ResponseBody<T> {
         this.msg = msg;
         this.success = success;
     }
+
+
 
 
 
