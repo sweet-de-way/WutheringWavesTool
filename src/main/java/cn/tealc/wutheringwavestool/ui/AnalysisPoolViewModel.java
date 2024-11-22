@@ -3,6 +3,7 @@ package cn.tealc.wutheringwavestool.ui;
 import cn.tealc.wutheringwavestool.base.Config;
 import cn.tealc.wutheringwavestool.base.NotificationKey;
 import cn.tealc.wutheringwavestool.model.CardInfo;
+import cn.tealc.wutheringwavestool.model.ResponseBody;
 import cn.tealc.wutheringwavestool.model.SourceType;
 import cn.tealc.wutheringwavestool.model.analysis.AnalysisData;
 import cn.tealc.wutheringwavestool.model.analysis.SsrData;
@@ -96,13 +97,18 @@ public class AnalysisPoolViewModel implements ViewModel {
 
     public void refresh() {
         if (player != null && playerParams != null){
-            CardPoolRequestTask task=new CardPoolRequestTask(playerParams,Config.setting.getGameRootDir());
+            CardPoolRequestTask task=new CardPoolRequestTask(playerParams);
             task.setOnSucceeded(workerStateEvent -> {
-                data=task.getValue();
-                init();
-                savePoolData(playerParams);
-                MvvmFX.getNotificationCenter().publish(NotificationKey.MESSAGE,
-                        new MessageInfo(MessageType.SUCCESS,LanguageManager.getString("ui.analysis.message.type01")));
+                ResponseBody<Map<String, List<CardInfo>>> responseBody = task.getValue();
+                if (responseBody.getCode() == 200){
+                    data = responseBody.getData();
+                    init();
+                    MvvmFX.getNotificationCenter().publish(NotificationKey.MESSAGE,
+                            new MessageInfo(MessageType.SUCCESS,LanguageManager.getString("ui.analysis.message.type01")));
+                }else {
+                    MvvmFX.getNotificationCenter().publish(NotificationKey.MESSAGE,
+                            new MessageInfo(MessageType.WARNING,responseBody.getMsg()));
+                }
             });
             Thread.startVirtualThread(task);
             pieChartData.clear();
@@ -116,50 +122,29 @@ public class AnalysisPoolViewModel implements ViewModel {
 
 
     public void load() {
-        String dir = Config.setting.getGameRootDir();
-        if (dir != null) {
-            File file=null;
-            if (Config.setting.getGameRootDirSource() == SourceType.WE_GAME){
-                file=new File(dir + File.separator + "Client/Saved/Logs/Client.log");
-
-            }else {
-                file=new File(dir + File.separator + "Wuthering Waves Game/Client/Saved/Logs/Client.log");
-            }
-
-            if (file.exists()){
-                String url = LogFileUtil.getLogFileUrl(file);
-                if (url != null){
-                    Map<String, String> params = LogFileUtil.getParamFromUrl(url);
-                    CardPoolRequestTask task=new CardPoolRequestTask(params,Config.setting.getGameRootDir());
-                    task.setOnSucceeded(workerStateEvent -> {
-                        data = task.getValue();
-                        init();
-                        String playerId = params.get("playerId");
-                        if (!playerList.contains(playerId)){
-                            playerList.add(playerId);
-                        }
-                        this.player.set(playerId);
-                        savePoolData(params);
-                        publish("update-player");
-                        MvvmFX.getNotificationCenter().publish(NotificationKey.MESSAGE,
-                                new MessageInfo(MessageType.SUCCESS,LanguageManager.getString("ui.analysis.message.type01")));
-                    });
-                    Thread.startVirtualThread(task);
-                    pieChartData.clear();
-                    MvvmFX.getNotificationCenter().publish(NotificationKey.MESSAGE,
-                            new MessageInfo(MessageType.INFO,LanguageManager.getString("ui.analysis.message.type02")));
-                }else {
-                    MvvmFX.getNotificationCenter().publish(NotificationKey.MESSAGE,
-                            new MessageInfo(MessageType.WARNING,LanguageManager.getString("ui.analysis.message.type04")),false);
+        CardPoolRequestTask task=new CardPoolRequestTask();
+        task.setOnSucceeded(workerStateEvent -> {
+            ResponseBody<Map<String, List<CardInfo>>> responseBody = task.getValue();
+            if (responseBody.getCode() == 200){
+                data = responseBody.getData();
+                init();
+                String playerId = responseBody.getMsg();
+                if (!playerList.contains(playerId)){
+                    playerList.add(playerId);
                 }
+                this.player.set(playerId);
+                publish("update-player");
+                MvvmFX.getNotificationCenter().publish(NotificationKey.MESSAGE,
+                        new MessageInfo(MessageType.SUCCESS,LanguageManager.getString("ui.analysis.message.type01")));
             }else {
                 MvvmFX.getNotificationCenter().publish(NotificationKey.MESSAGE,
-                        new MessageInfo(MessageType.WARNING,String.format(LanguageManager.getString("ui.analysis.message.type05"),file.getAbsolutePath())),false);
+                        new MessageInfo(MessageType.WARNING,responseBody.getMsg()));
             }
-        }else {
-            MvvmFX.getNotificationCenter().publish(NotificationKey.MESSAGE,
-                    new MessageInfo(MessageType.WARNING,LanguageManager.getString("ui.analysis.message.type06")),false);
-        }
+        });
+        Thread.startVirtualThread(task);
+        pieChartData.clear();
+        MvvmFX.getNotificationCenter().publish(NotificationKey.MESSAGE,
+                new MessageInfo(MessageType.INFO,LanguageManager.getString("ui.analysis.message.type02")));
     }
 
 
