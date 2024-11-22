@@ -3,6 +3,7 @@ package cn.tealc.wutheringwavestool.thread;
 import cn.tealc.wutheringwavestool.dao.GameRecordDao;
 import cn.tealc.wutheringwavestool.dao.UserInfoDao;
 import cn.tealc.wutheringwavestool.model.game.GameRecord;
+import cn.tealc.wutheringwavestool.model.game.GameRecordForLog;
 import cn.tealc.wutheringwavestool.util.GameResourcesManager;
 import com.kuro.kujiequ.model.sign.UserInfo;
 import javafx.concurrent.Task;
@@ -13,10 +14,12 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
-import java.util.LinkedHashMap;
-import java.util.Map;
+import java.util.*;
+import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 /**
@@ -25,7 +28,7 @@ import java.util.regex.Pattern;
  * @author: Leck
  * @create: 2024-11-13 15:08
  */
-public class GameLogFileAnalysisTask extends Task<Boolean>{
+public class GameLogFileAnalysisTask extends Task<List<GameRecordForLog>>{
     private static final Logger LOG= LoggerFactory.getLogger(GameLogFileAnalysisTask.class);
 
     private enum Type{
@@ -39,7 +42,10 @@ public class GameLogFileAnalysisTask extends Task<Boolean>{
         TRANSFER(false,"传送:完成"),
         PARRY_FRONT(true,"结束技能名称: (.+)?极限闪避前闪"),
         PARRY_BACK(true,"结束技能名称: (.+)?极限闪避后闪"),
-        PARRY_ATTACK(true,"结束技能名称: (.+)?极限闪避反击");
+        PARRY_ATTACK(true,"结束技能名称: (.+)?极限闪避反击"),
+        STRENGTH(false,"当前体力数据 [data: "),
+        MONTH_CARD(false,"【月卡每日奖励】信息推送"),
+        ACCOUNT_LOGIN(false,"SetUserId [playerId:");
 
         private final boolean regex;
         private final String key;
@@ -52,17 +58,23 @@ public class GameLogFileAnalysisTask extends Task<Boolean>{
 
 
     @Override
-    protected Boolean call() throws Exception {
+    protected List<GameRecordForLog> call() throws Exception {
+        List<GameRecordForLog> list=new ArrayList<>();
+
+
+
         Pattern parryFrontPattern = Pattern.compile(Type.PARRY_FRONT.key);
         Pattern parryBackPattern = Pattern.compile(Type.PARRY_BACK.key);
         Pattern parryAttackPattern = Pattern.compile(Type.PARRY_ATTACK.key);
 
-        GameRecord record=new GameRecord();
+        GameRecordForLog record=new GameRecordForLog();
         File dir = GameResourcesManager.getGameLogDir();
         if (dir != null){
-            File[] files = dir.listFiles();
+            File[] files = dir.listFiles(file-> file.getName().startsWith("Client"));
             if (files != null) {
                 for (File file : files){
+                    int currentStrength=0; //当前体力
+
                     try (BufferedReader br = new BufferedReader(new FileReader(file.getAbsolutePath()))) {
                         String line;
                         while ((line = br.readLine()) != null) {
@@ -78,6 +90,35 @@ public class GameLogFileAnalysisTask extends Task<Boolean>{
                                             case PHANTOM_TRANSFORM_SKILL -> record.setPhantomTransformSkill(record.getPhantomTransformSkill() + 1);
                                             case PARALYSIS -> record.setParalysis(record.getParalysis() + 1);
                                             case TRANSFER -> record.setTransfer(record.getTransfer() + 1);
+                                            case STRENGTH -> {
+                                                int strength = getStrength(line);
+                                                if (strength < currentStrength){
+                                                   int usedStrength = currentStrength - strength;
+                                                   record.setUsedStrength(record.getUsedStrength() + usedStrength);
+                                                }
+                                                currentStrength = strength;
+                                            }
+                                            case MONTH_CARD -> {
+                                                int remainDays = getRemainDays(line);
+                                                record.setMonthCard(true);
+                                                record.setMonthCardRemainDays(remainDays);
+                                            }
+                                            case ACCOUNT_LOGIN -> {
+                                                String accountUID = getAccountUID(line);
+                                                if (accountUID != null) { //游戏账号切换了
+                                                    Long timestamp = getTimestamp(line);
+
+                                                    if (list.isEmpty()){ //当是第一个玩家时，不切换
+                                                        record.setRoleId(accountUID);
+                                                        list.add(record);
+                                                    }else {//当是第二个玩家及以上时，切换
+                                                        record.setCloseTime(timestamp); //当前玩家下线时间
+                                                        record = new GameRecordForLog();//新玩家
+                                                        record.setRoleId(accountUID);
+                                                        list.add(record);
+                                                    }
+                                                }
+                                            }
                                         }
                                     }
                                 }
@@ -98,31 +139,126 @@ public class GameLogFileAnalysisTask extends Task<Boolean>{
                 }
             }
         }
+        saveData(list);
+        return list;
+    }
 
-        int num=record.getRoleChange() + record.getRoleDeath() + record.getBattle()
-                +record.getPhantomGet()+record.getPhantomCallSkill()+record.getPhantomTransformSkill()
-                +record.getParalysis()+record.getTransfer()+record.getParryFront()
-                +record.getParryBack()+record.getParryAttack();
-        if (num > 0){
-            //有数据，保存
-            UserInfoDao userInfoDao =new UserInfoDao();
-            UserInfo main = userInfoDao.getMain();
-            if (main != null){
-                record.setRoleId(main.getRoleId());
+
+    /**
+     * @description: 保存数据
+     * @param:	records
+     * @return  void
+     * @date:   2024/11/22
+     */
+    private void saveData(List<GameRecordForLog> records){
+        GameRecordDao dao =new GameRecordDao();
+        LOG.debug("本次游戏共统计 {} 名角色",records.size());
+        for (GameRecordForLog record : records) {
+            LOG.debug("开始保存 {} 的游玩数据",record.getRoleId());
+            int num=record.getRoleChange() + record.getRoleDeath() + record.getBattle()
+                    +record.getPhantomGet()+record.getPhantomCallSkill()+record.getPhantomTransformSkill()
+                    +record.getParalysis()+record.getTransfer()+record.getParryFront()
+                    +record.getParryBack()+record.getParryAttack()+record.getUsedStrength()+record.getMonthCardRemainDays();
+            if (num > 0 || record.isMonthCard()){
+                //有数据，保存
+                LocalDate currentDate = LocalDate.now();
+                DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+                String formattedDate = currentDate.format(formatter);
+                record.setCreateDate(formattedDate);
+                dao.addOrUpdateRecord(record);
+                LOG.info(record.toString());
+            }else {
+                LOG.info("日志无可用数据，无需更新");
             }
-            LocalDate currentDate = LocalDate.now();
-            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
-            String formattedDate = currentDate.format(formatter);
-            record.setCreateDate(formattedDate);
-            GameRecordDao dao =new GameRecordDao();
-            dao.addOrUpdateRecord(record);
-            LOG.info(record.toString());
-        }else {
-            LOG.info("日志无可用数据，无需更新");
         }
-        return true;
+
     }
 
 
 
+
+    /**
+     * @description: 获取体力，两种体力
+     * @param:	row
+     * @return  int
+     * @date:   2024/11/18
+     */
+    private int getStrength(String row){
+       // System.out.println(row);
+        String regex = "UPs:(\\d+)";
+        Pattern pattern = Pattern.compile(regex);
+        Matcher matcher = pattern.matcher(row);
+        if (matcher.find()){
+            return Integer.parseInt(matcher.group(1));
+        }
+        return 0;
+   /*     int i = 0;
+        while (matcher.find()) {
+            i += Integer.parseInt(matcher.group(1));
+        }
+        //System.out.println(i);
+        return i;*/
+    }
+
+
+    /**
+     * @description: 获取月卡剩余天数
+     * @param:	row
+     * @return  int
+     * @date:   2024/11/18
+     */
+    private int getRemainDays(String row){
+        String regex = "remainDays: (\\d+)";
+        Pattern pattern = Pattern.compile(regex);
+        Matcher matcher = pattern.matcher(row);
+        int i = 0;
+        while (matcher.find()) {
+            i += Integer.parseInt(matcher.group(1));
+        }
+        return i;
+    }
+
+
+    /**
+     * @description: 匹配玩家UID
+     * @param:	row
+     * @return  java.lang.String
+     * @date:   2024/11/22
+     */
+    private String getAccountUID(String row){
+        String regex = "playerId:\\s*(\\d+)";
+        Pattern pattern = Pattern.compile(regex);
+        Matcher matcher = pattern.matcher(row);
+
+        if (matcher.find()) {
+            String playerId = matcher.group(1);
+            return playerId;
+        }
+        return null;
+    }
+
+
+    /**
+     * @description: 匹配日志中2024.11.21-23.59.52:748的时间
+     * @param:	row
+     * @return  java.lang.Long
+     * @date:   2024/11/22
+     */
+    private Long getTimestamp(String row){
+        String regex = "\\[(\\d{4}\\.\\d{2}\\.\\d{2}-\\d{2}\\.\\d{2}\\.\\d{2}:\\d{3})\\]";
+        Pattern pattern = Pattern.compile(regex);
+        Matcher matcher = pattern.matcher(row);
+        if (matcher.find()) {
+            String time = matcher.group(1);
+            SimpleDateFormat format = new SimpleDateFormat("yyyy.MM.dd-HH.mm.ss:SSS");
+            try {
+                Date date = format.parse(time);
+                // 获取毫秒
+                return date.getTime();
+            } catch (ParseException e) {
+                LOG.error("游戏日志中时间转换出现问题" + e.getMessage());
+            }
+        }
+        return null;
+    }
 }

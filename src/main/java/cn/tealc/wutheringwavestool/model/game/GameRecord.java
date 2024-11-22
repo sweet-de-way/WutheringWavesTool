@@ -24,6 +24,9 @@ public class GameRecord {
     private int parryBack; //极限闪避次数
     private int parryAttack; //极限闪避并反击次数
 
+    private int usedStrength;//消耗体力
+    private boolean monthCard;//月卡
+    private int monthCardRemainDays;//剩余天数
 
     public int getId() {
         return id;
@@ -137,10 +140,38 @@ public class GameRecord {
         this.parryAttack = parryAttack;
     }
 
+    public int getUsedStrength() {
+        return usedStrength;
+    }
+
+    public void setUsedStrength(int usedStrength) {
+        this.usedStrength = usedStrength;
+    }
+
+    public boolean isMonthCard() {
+        return monthCard;
+    }
+
+    public void setMonthCard(boolean monthCard) {
+        this.monthCard = monthCard;
+    }
+
+    public int getMonthCardRemainDays() {
+        return monthCardRemainDays;
+    }
+
+    public void setMonthCardRemainDays(int monthCardRemainDays) {
+        this.monthCardRemainDays = monthCardRemainDays;
+    }
+
+
     @Override
     public String toString() {
         return "GameRecord{" +
-                "roleChange=" + roleChange +
+                "id=" + id +
+                ", roleId='" + roleId + '\'' +
+                ", createDate='" + createDate + '\'' +
+                ", roleChange=" + roleChange +
                 ", roleDeath=" + roleDeath +
                 ", battle=" + battle +
                 ", phantomGet=" + phantomGet +
@@ -151,6 +182,9 @@ public class GameRecord {
                 ", parryFront=" + parryFront +
                 ", parryBack=" + parryBack +
                 ", parryAttack=" + parryAttack +
+                ", usedStrength=" + usedStrength +
+                ", monthCard=" + monthCard +
+                ", monthCardRemainDays=" + monthCardRemainDays +
                 '}';
     }
 }
