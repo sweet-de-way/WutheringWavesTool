@@ -37,6 +37,9 @@ public class GameRecordDao {
         map.put("parry_front","parryFront");
         map.put("parry_back","parryBack");
         map.put("parry_attack","parryAttack");
+        map.put("used_strength","usedStrength");
+        map.put("month_card","monthCard");
+        map.put("month_card_remain_days","monthCardRemainDays");
         BeanProcessor beanProcessor=new BeanProcessor(map);
         return new BasicRowProcessor(beanProcessor);
     }
@@ -99,9 +102,9 @@ public class GameRecordDao {
         String sql= """
                 INSERT INTO game_record (role_id,create_date,role_change,
                 role_death,battle,phantom_get,phantom_call_skill,phantom_transform_skill,
-                paralysis,transfer,parry_front,parry_back,parry_attack)
+                paralysis,transfer,parry_front,parry_back,parry_attack,used_strength,month_card,month_card_remain_days)
                 VALUES
-                (?,?,?,?,?,?,?,?,?,?,?,?,?)
+                (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)
                 ON CONFLICT(role_id,create_date) DO UPDATE SET
                     role_change = role_change + ?,
                     role_death = role_death + ?,
@@ -113,7 +116,10 @@ public class GameRecordDao {
                     transfer = transfer + ?,
                     parry_front = parry_front + ?,
                     parry_back = parry_back + ?,
-                    parry_attack = parry_attack + ?;
+                    parry_attack = parry_attack + ?,
+                    used_strength = used_strength + ?,
+                    month_card = month_card + ?,
+                    month_card_remain_days = month_card_remain_days + ?;
                 """;
         QueryRunner qr=new QueryRunner();
         try {
@@ -122,10 +128,11 @@ public class GameRecordDao {
                     record.getRoleId(),record.getCreateDate(),record.getRoleChange(),record.getRoleDeath(),
                     record.getBattle(),record.getPhantomGet(),record.getPhantomCallSkill(),
                     record.getPhantomTransformSkill(),record.getParalysis(),record.getTransfer(),
-                    record.getParryFront(),record.getParryBack(),record.getParryAttack(),//添加结束，后续更新
+                    record.getParryFront(),record.getParryBack(),record.getParryAttack(),
+                    record.getUsedStrength(),record.isMonthCard(),record.getMonthCardRemainDays(),//添加结束，后续更新
                     record.getRoleChange(),record.getRoleDeath(),record.getBattle(),record.getPhantomGet(),record.getPhantomCallSkill(),
                     record.getPhantomTransformSkill(),record.getParalysis(),record.getTransfer(),record.getParryFront(),record.getParryBack(),
-                    record.getParryAttack());
+                    record.getParryAttack(),record.getUsedStrength(),record.isMonthCard(),record.getMonthCardRemainDays());
         } catch (SQLException e) {
             LOG.error(e.getMessage(),e);
             return null;

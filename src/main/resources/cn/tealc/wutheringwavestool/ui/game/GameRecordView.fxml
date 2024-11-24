@@ -6,10 +6,9 @@
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.VBox?>
 
-
 <AnchorPane prefHeight="700.0" prefWidth="1000.0" styleClass="game-record" stylesheets="@../../css/GameRecord.css" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="cn.tealc.wutheringwavestool.ui.game.GameRecordView">
    <children>
-      <HBox layoutX="10.0" layoutY="10.0" spacing="40.0" AnchorPane.leftAnchor="0.0" AnchorPane.topAnchor="60.0">
+      <HBox alignment="CENTER" layoutX="10.0" layoutY="10.0" spacing="40.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="60.0">
          <children>
             <AnchorPane styleClass="item">
                <children>
@@ -130,7 +129,7 @@
                         <HBox prefWidth="300.0" spacing="15.0">
                            <children>
                               <Label styleClass="tip" text="%ui.game_record.data.label09" />
-                              <Label fx:id="parryAttack1" styleClass="num" text="15" />
+                              <Label fx:id="totalParryAttack" styleClass="num" text="15" />
                            </children>
                         </HBox>
                      </children>

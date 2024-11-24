@@ -21,9 +21,9 @@
             <ComboBox fx:id="accountComboBox" prefWidth="150.0" />
          </children>
       </HBox>
-      <VBox layoutX="18.0" layoutY="88.0" spacing="30.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="70.0">
+      <VBox alignment="TOP_CENTER" layoutX="18.0" layoutY="88.0" spacing="30.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="70.0">
          <children>
-            <HBox spacing="50.0">
+            <HBox alignment="TOP_CENTER" spacing="50.0">
                <children>
                   <AnchorPane prefHeight="150.0" prefWidth="300.0" styleClass="item">
                      <children>

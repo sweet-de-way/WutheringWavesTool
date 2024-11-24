@@ -82,6 +82,7 @@ public class GameRecordView implements FxmlView<GameRecordViewModel>, Initializa
         paralysis.textProperty().bind(viewModel.paralysisProperty().asString());
         transfer.textProperty().bind(viewModel.transferProperty().asString());
         parry.textProperty().bind(viewModel.parryProperty().asString());
+        parryAttack.textProperty().bind(viewModel.parryAttackProperty().asString());
 
 
         totalRoleChange.textProperty().bind(viewModel.totalRoleChangeProperty().asString());
@@ -92,7 +93,7 @@ public class GameRecordView implements FxmlView<GameRecordViewModel>, Initializa
         totalParalysis.textProperty().bind(viewModel.totalParalysisProperty().asString());
         totalTransfer.textProperty().bind(viewModel.totalTransferProperty().asString());
         totalParry.textProperty().bind(viewModel.totalParryProperty().asString());
-
+        totalParryAttack.textProperty().bind(viewModel.totalParryAttackProperty().asString());
 
 
     }
