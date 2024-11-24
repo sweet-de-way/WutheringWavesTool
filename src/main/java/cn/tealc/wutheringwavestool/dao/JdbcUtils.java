@@ -112,6 +112,9 @@ public class JdbcUtils {
                         parry_front INTEGER DEFAULT 0, -- 极限闪避次数
                         parry_back INTEGER DEFAULT 0, -- 极限闪避次数
                         parry_attack INTEGER DEFAULT 0, -- 极限闪避并反击次数
+                        used_strength INTEGER DEFAULT 0,
+                        month_card BOOL DEFAULT false,
+                        month_card_remain_days INTEGER DEFAULT 0,
                         UNIQUE (role_id, create_date)
                     );
                     """;
