@@ -145,7 +145,6 @@ public class CardPoolRequestTask extends Task<ResponseBody<Map<String, List<Card
             }else {
                 LOG.info("请求出现问题");
             }
-
         }
         LOG.debug("获取结束");
         return map;
@@ -164,7 +163,6 @@ public class CardPoolRequestTask extends Task<ResponseBody<Map<String, List<Card
      * @date:   2024/11/21
      */
     private List<CardInfo> update(List<CardInfo> oldData,List<CardInfo> newData){
-        List<CardInfo> list = new ArrayList<>();
         if (newData.isEmpty()){
             return oldData;
         }else if (oldData.isEmpty()){
@@ -175,13 +173,14 @@ public class CardPoolRequestTask extends Task<ResponseBody<Map<String, List<Card
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
         LocalDateTime newTime = LocalDateTime.parse(last.getTime(), formatter);
 
+        List<CardInfo> list = new ArrayList<>(newData);
         for (int i = 0; i <oldData.size(); i++) {
             CardInfo first = oldData.get(i);
             LocalDateTime oldTime = LocalDateTime.parse(first.getTime(), formatter);
             if (oldTime.isBefore(newTime)){
                 list.addAll(oldData.subList(i,oldData.size()));
                 break;
-            }else if (oldTime.isEqual(newTime)){
+            }else if (oldTime.isEqual(newTime)){ //当存在相等时间时，找到同一时间最早的数据
                 for (int j = i; j < oldData.size(); j++) {
                     CardInfo first2 = oldData.get(j);
                     LocalDateTime oldTime2 = LocalDateTime.parse(first2.getTime(), formatter);
@@ -193,7 +192,6 @@ public class CardPoolRequestTask extends Task<ResponseBody<Map<String, List<Card
                 break;
             }
         }
-        list.addAll(newData);
         return list;
     }
 
