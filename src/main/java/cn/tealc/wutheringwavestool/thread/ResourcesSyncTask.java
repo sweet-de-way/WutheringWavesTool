@@ -45,7 +45,7 @@ public class ResourcesSyncTask extends Task<String> {
     private static final String LOCAL_ROOT_JSON="assets/data/Root_%s.json";
     private final String url;
     private final String resource_template;
-    private ObjectMapper mapper = new ObjectMapper();
+    private final ObjectMapper mapper = new ObjectMapper();
 
     private  int filesSize = 0;
 

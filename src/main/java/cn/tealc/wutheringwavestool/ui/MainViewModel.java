@@ -38,7 +38,6 @@ public class MainViewModel implements ViewModel {
             Thread.startVirtualThread(task);
         }
         updateKujiequ();
-
     }
 
 
