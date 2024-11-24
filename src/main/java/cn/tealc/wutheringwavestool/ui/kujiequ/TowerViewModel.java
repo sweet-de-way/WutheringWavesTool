@@ -47,7 +47,6 @@ public class TowerViewModel implements ViewModel {
     private void getData(){
         TowerDataDetailTask task = new TowerDataDetailTask(userInfo);
         task.setOnSucceeded(event -> {
-            //System.out.println(task.getValue().getData().get(0).getDifficultyName());
             ResponseBody<DifficultyTotal> responseBody = task.getValue();
             if (responseBody.getCode() == 200) {
                 DifficultyTotal data = responseBody.getData();
@@ -68,7 +67,9 @@ public class TowerViewModel implements ViewModel {
                 seasonEndTime.set(String.format("%d天%d小时后刷新", days, hours));
                 title.set("深境区");
                 GameTowerDataDao dataDao = new GameTowerDataDao();
-                Set<Long> endTimeList = dataDao.getEndTimeList();
+                List<Long> endTimeList = dataDao.getEndTimeList();
+
+
 
                 SimpleDateFormat endFormat = new SimpleDateFormat("yyyy.MM.dd");
                 DateTimeFormatter startFormat = DateTimeFormatter.ofPattern("yyyy.MM.dd");
