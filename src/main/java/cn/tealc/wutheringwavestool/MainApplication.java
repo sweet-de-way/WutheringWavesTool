@@ -8,6 +8,7 @@ import cn.tealc.wutheringwavestool.jna.GameAppListener;
 import cn.tealc.wutheringwavestool.jna.GlobalKeyListener;
 import cn.tealc.wutheringwavestool.model.message.MessageInfo;
 import cn.tealc.wutheringwavestool.model.message.MessageType;
+import cn.tealc.wutheringwavestool.util.AppLocked;
 import cn.tealc.wutheringwavestool.thread.ResourcesSyncTask;
 import cn.tealc.wutheringwavestool.ui.tray.NewFxTrayIcon;
 import cn.tealc.wutheringwavestool.util.LanguageManager;
@@ -28,11 +29,8 @@ import org.kordamp.ikonli.material2.Material2OutlinedMZ;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import javax.swing.*;
 import java.awt.*;
 import java.io.IOException;
-import java.util.Locale;
-import java.util.ResourceBundle;
 
 public class MainApplication extends Application {
     private static final Logger LOG=LoggerFactory.getLogger(MainApplication.class);
@@ -41,6 +39,7 @@ public class MainApplication extends Application {
     public GameAppListener appListener;
     private NewFxTrayIcon newFxTrayIcon;
 
+    private static AppLocked appLocked;
 
     public MainApplication() {
         System.setProperty("prism.lcdtext", "false");
@@ -57,7 +56,7 @@ public class MainApplication extends Application {
         Platform.setImplicitExit(false);
 
 
-
+        appLocked = new AppLocked();
 
     }
 
@@ -139,7 +138,6 @@ public class MainApplication extends Application {
             User32.INSTANCE.UnhookWinEvent(gameAppListener);
         }
         SystemTray systemTray = SystemTray.getSystemTray();
-
         for (TrayIcon trayIcon : systemTray.getTrayIcons()) {
             if (trayIcon instanceof NewFxTrayIcon tray) {
                 systemTray.remove(tray);
@@ -149,6 +147,7 @@ public class MainApplication extends Application {
         JdbcUtils.exit();
         Config.save();
         window.close();
+        appLocked.release();
         System.exit(0);
     }
 
