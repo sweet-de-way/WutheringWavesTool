@@ -131,5 +131,16 @@ public class GameResourcesManager {
         }
         return exe;
     }
-
+    public static File getGameLogFile() {
+        String dir = Config.setting.getGameRootDir();
+        File file = null;
+        if (dir != null) {
+            if (Config.setting.getGameRootDirSource() == SourceType.WE_GAME) {
+                file=new File(dir + File.separator + "Client/Saved/Logs/Client.log");
+            } else {
+                file=new File(dir + File.separator + "Wuthering Waves Game/Client/Saved/Logs/Client.log");
+            }
+        }
+        return file;
+    }
 }
