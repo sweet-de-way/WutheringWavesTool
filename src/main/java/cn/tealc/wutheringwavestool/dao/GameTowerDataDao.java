@@ -63,12 +63,13 @@ public class GameTowerDataDao {
     }
 
 
-    public Set<Long> getEndTimeList(){
+    public List<Long> getEndTimeList(){
         QueryRunner qr=new QueryRunner();
         String sql="SELECT endTime FROM game_tower";
         try {
             List<Long> query = qr.query(con, sql, new ColumnListHandler<>());
-            return new HashSet<>(query);
+            HashSet<Long> longs = new HashSet<>(query);
+            return longs.stream().sorted(Comparator.reverseOrder()).toList();
         } catch (SQLException e) {
             LOG.error(e.getMessage(),e);
             return null;
