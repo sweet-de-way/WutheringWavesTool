@@ -33,12 +33,14 @@ import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.Node;
+import javafx.scene.SnapshotParameters;
 import javafx.scene.control.*;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.effect.GaussianBlur;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import javafx.scene.image.WritableImage;
 import javafx.scene.layout.*;
 import javafx.scene.shape.Circle;
 import javafx.scene.shape.Rectangle;
@@ -108,6 +110,10 @@ public class MainView implements Initializable,FxmlView<MainViewModel> {
 
     @FXML
     private HBox titlebar;
+
+    //防止每次执行startNavAnim(),都创造一次，而不能stop()
+    private Timeline my_timeline = null;
+
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
 
@@ -571,7 +577,24 @@ public class MainView implements Initializable,FxmlView<MainViewModel> {
 
     public void startNavAnim() {
 
-        var t = new Timeline(
+        //将animation执行的内容改成图片，而不是整个ui
+        SnapshotParameters params = new SnapshotParameters();
+		params.setFill(javafx.scene.paint.Color.TRANSPARENT);
+
+        WritableImage image = child.snapshot(params, null);
+        ImageView imageView = new ImageView(image);
+
+        Node oldNode = child.getChildren().get(0);
+        child.getChildren().setAll(imageView);
+
+        //中断之前未播放完的动画
+        if (my_timeline != null) {
+            if (my_timeline.getStatus() == Animation.Status.RUNNING) {
+                my_timeline.stop();
+            }
+        };
+
+        my_timeline = new Timeline(
                 new KeyFrame(Duration.ZERO,
                         new KeyValue(child.scaleXProperty(), 0.9, Animations.EASE),
                         new KeyValue(child.scaleYProperty(), 0.9, Animations.EASE)
@@ -582,14 +605,21 @@ public class MainView implements Initializable,FxmlView<MainViewModel> {
                 )
         );
 
-        t.statusProperty().addListener((obs, old, val) -> {
-            if (val == Animation.Status.STOPPED) {
-                child.setScaleX(1);
-                child.setScaleY(1);
-            }
+        // t.statusProperty().addListener((obs, old, val) -> {
+        //     if (val == Animation.Status.STOPPED) {
+        //         child.setScaleX(1);
+        //         child.setScaleY(1);
+        //     }
+        // });
+
+        //不使用.addListener()可能会有更好的性能
+        my_timeline.setOnFinished(event -> {
+            child.setScaleX(1);
+            child.setScaleY(1);
+            child.getChildren().setAll(oldNode);
         });
         
-        t.play();
+        my_timeline.play();
     }
 
 
